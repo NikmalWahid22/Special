@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Love Rain Animation</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            height: 100%;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 28px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            z-index: 10;
+            text-shadow: 0 0 10px #ff69b4;
+        }
+    </style>
+</head>
+<body>
+
+        <div class="center-text">
+            Haloo kayla comellll<br>
+            Cemangatt yeahhh
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <audio id="bg-music" loop autoplay muted>
+            <source src="Artic_Monkey.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <script>
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const music = document.getElementById('bg-music');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const hearts = [];
+            const bokehs = [];
+
+            const heartColors = ["#FF69B4", "#FF4D4D", "#FFA07A", "#FFC0CB", "#FF7F7F"];
+
+            function createHeart() {
+                const size = Math.random() * 25 + 10;
+                hearts.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + size,
+                    size: size,
+                    speed: Math.random() * 2 + 1.5,
+                    alpha: Math.random() * 0.5 + 0.5,
+                    color: heartColors[Math.floor(Math.random() * heartColors.length)],
+                    rotation: Math.random() * 360
+                });
+            }
+
+            function drawHeart(x, y, size, alpha, color, rotation) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rotation * Math.PI / 180);
+                ctx.scale(size / 15, size / 15);
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(0, -3, -5, -5, -5, -10);
+                ctx.bezierCurveTo(-5, -15, 0, -15, 0, -10);
+                ctx.bezierCurveTo(0, -15, 5, -15, 5, -10);
+                ctx.bezierCurveTo(5, -5, 0, -3, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function createBokeh() {
+                const size = Math.random() * 15 + 5;
+                bokehs.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + size,
+                    size: size,
+                    speed: Math.random() * 1 + 0.5,
+                    alpha: Math.random() * 0.3 + 0.2,
+                    color: "rgba(255, 255, 255, 0.5)"
+                });
+            }
+
+            function drawBokeh(x, y, size, alpha, color) {
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (Math.random() < 0.6) createHeart();
+                if (Math.random() < 0.3) createBokeh();
+
+                for (let i = 0; i < bokehs.length; i++) {
+                    const b = bokehs[i];
+                    b.y -= b.speed;
+                    drawBokeh(b.x, b.y, b.size, b.alpha, b.color);
+
+                    if (b.y + b.size < 0) {
+                        bokehs.splice(i, 1);
+                        i--;
+                    }
+                }
+
+                for (let i = 0; i < hearts.length; i++) {
+                    const h = hearts[i];
+                    h.y -= h.speed;
+                    h.rotation += 0.5;
+                    drawHeart(h.x, h.y, h.size, h.alpha, h.color, h.rotation);
+
+                    if (h.y + h.size < 0) {
+                        hearts.splice(i, 1);
+                        i--;
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            // Play lagu saat interaksi pertama
+            window.addEventListener('click', () => {
+                music.muted = false;
+                music.play();
+            });
+
+            window.addEventListener('touchstart', () => {
+                music.muted = false;
+                music.play();
+            });
+        </script>
+
+        <audio id="bgm" src="Artic_Monkey.mp3" autoplay loop></audio>
+        <script>
+        const audio = document.getElementById('bgm');
+        document.body.addEventListener('click', () => {
+            audio.play();
+        });
+        </script>
+
+        </body>
+        </html>
